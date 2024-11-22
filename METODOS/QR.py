@@ -1,4 +1,3 @@
-
 import numpy as np
 
 def algoritmo_qr():
@@ -18,16 +17,19 @@ def algoritmo_qr():
             except ValueError:
                 print("Error: Ingrese solo números.")
     
-    # Primero obtener la transformación de Householder
-    A = TransformacionHouseholder(A)
+    # Preguntar por transformación Householder
+    opcion = input("\n¿Desea usar la transformación de Householder? (s/n): ").lower()
+    if opcion == 's':
+        A = TransformacionHouseholder(A)
+        print("\nMatriz después de la transformación de Householder:")
+        print(A)
     
-    iteraciones = int(input("Número de iteraciones: "))
+    iteraciones = int(input("\nNúmero de iteraciones: "))
     
     for k in range(iteraciones):
         Q = np.eye(n)
         R = A.copy()
         
-        # Encontrar el elemento máximo DEBAJO de la diagonal
         max_val = 0
         max_i = max_j = 0
         for i in range(1, n):            
@@ -37,7 +39,6 @@ def algoritmo_qr():
                     max_i = i
                     max_j = j
         
-        # Calcular parámetros de rotación
         if abs(max_val) > 1e-10:
             i, j = max_i, max_j          
             r = np.sqrt(R[j,j]**2 + R[i,j]**2)
@@ -60,7 +61,6 @@ def algoritmo_qr():
     print("\nValores propios (elementos de la diagonal):")
     for i in range(n-1, -1, -1):
         print(f"λ{n-i} = {A[i,i]:.4f}")
-        
 
 def TransformacionHouseholder(A):
     n = len(A)
@@ -74,8 +74,6 @@ def TransformacionHouseholder(A):
     tol = 1e-10
     
     for iter in range(max_iter):
-        H_old = H.copy()
-        
         for k in range(n-2):
             suma = 0
             for j in range(k+1, n):
@@ -102,24 +100,16 @@ def TransformacionHouseholder(A):
                     break
         
         if es_tridiagonal:
-            print(f"Convergió en {iter+1} iteraciones")
             break
     
-    # Limpiar valores cercanos a cero
     H[abs(H) < tol] = 0
     
     traza_final = np.trace(H)
     print(f"Traza final: {traza_final:.4f}")
-    print(f"Diferencia en trazas: {abs(traza_inicial - traza_final):.10f}")
     
-    # Configurar formato de impresión
-    np.set_printoptions(precision=8, suppress=True, floatmode='fixed')
+    np.set_printoptions(precision=5, suppress=True, floatmode='fixed')
     return H
 
 if __name__ == "__main__":
-    A = np.array([[-2, 3, 1, -1],
-                  [3, 4, 2, 5],
-                  [1, 2, 1, 3],
-                  [-1, 5, 3, -4]], dtype=float)
-    
+
     algoritmo_qr()
